@@ -8,6 +8,7 @@ import Profile from "./Pages/Profile";
 import Pnf from "./Pages/Pnf";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./hooks/useAuth";
+import { Toaster } from "react-hot-toast";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -18,7 +19,9 @@ function ProtectedRoute({ children }) {
 
 export default function App() {
   return (
-    <AuthProvider>
+    <>
+      <Toaster position="top-right" />
+      <AuthProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
@@ -35,6 +38,7 @@ export default function App() {
           <Route path="*" element={<Pnf />} />
         </Routes>
       </BrowserRouter>
-    </AuthProvider>
-  );
+      </AuthProvider>
+    </>
+    );
 }

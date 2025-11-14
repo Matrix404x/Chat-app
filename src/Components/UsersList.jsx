@@ -24,9 +24,12 @@ export default function UsersList() {
               key={u.uid}
               className={`user-item ${selectedUser?.uid === u.uid ? "selected" : ""}`}
               onClick={() => {
-                setSelectedUser(u);
-                navigate(`/chat/${u.uid}`);
-              }}
+                  setSelectedUser(u);
+                  const wide = window.innerWidth >= 800;
+                  if (!wide) {
+                    navigate(`/chat/${u.uid}`);
+                  }
+                }}
             >
               <div className="avatar" aria-hidden>
                 {u.photoURL ? (
@@ -37,7 +40,7 @@ export default function UsersList() {
               </div>
               <div className="user-info">
                 <div className="name">{u.displayName || u.email}</div>
-                <div className="meta">{u.email}</div>
+                {/* <div className="meta">{u.email}</div> */}
               </div>
             </li>
           ))}

@@ -1,17 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { db, auth } from "../config/firebase";
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import ChatMessage from "../Components/ChatMessage";
 import ChatInput from "../Components/ChatInput";
 import { useAuth } from "../hooks/useAuth";
 
-export default function Chat() {
-  const { uid } = useParams();
+export default function Chat({ uidProp, inline = false }) {
+  const params = useParams();
+  const uid = uidProp || params.uid;
   const navigate = useNavigate();
   const { users, setSelectedUser } = useAuth();
   const [selectedUser, setLocalSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [editingMessage, setEditingMessage] = useState(null);
   const messagesRef = collection(db, "messages");
   const endRef = useRef(null);
 
@@ -54,11 +56,35 @@ export default function Chat() {
     });
   };
 
+  const deleteMessage = async (id) => {
+    try {
+      const msgRef = doc(db, "messages", id);
+      await deleteDoc(msgRef);
+    } catch (err) {
+      console.error("Failed to delete message:", err.message);
+    }
+  };
+
+  const updateMessage = async (id, newText) => {
+    if (!newText || !newText.trim()) return;
+    try {
+      const msgRef = doc(db, "messages", id);
+      await updateDoc(msgRef, { text: newText, editedAt: serverTimestamp() });
+      setEditingMessage(null);
+    } catch (err) {
+      console.error("Failed to update message:", err.message);
+    }
+  };
+
   return (
     <div className="chat-panel">
       <header className="chat-header">
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          <button className="btn-ghost" onClick={() => navigate(-1)}>&larr;</button>
+          {inline ? (
+            <button className="btn-ghost" onClick={() => setSelectedUser(null)}>&times;</button>
+          ) : (
+            <button className="btn-ghost" onClick={() => navigate(-1)}>&larr;</button>
+          )}
           <div>
             <div style={{ fontWeight: 700 }}>{selectedUser?.displayName || selectedUser?.email || selectedUser?.uid}</div>
             <div style={{ fontSize: 12, color: "var(--muted)" }}>{selectedUser?.email}</div>
@@ -66,18 +92,18 @@ export default function Chat() {
         </div>
         <div className="header-actions">
           <button className="btn-ghost" onClick={() => navigate('/profile')}>Profile</button>
-          <button className="btn-ghost" onClick={() => navigate('/home')}>Home</button>
+          {!inline && <button className="btn-ghost" onClick={() => navigate('/home')}>Home</button>}
         </div>
       </header>
 
       <div className="messages">
         {messages.map((msg) => (
-          <ChatMessage key={msg.id} message={msg} />
+          <ChatMessage key={msg.id} message={msg} onEdit={() => setEditingMessage(msg)} onDelete={() => deleteMessage(msg.id)} />
         ))}
         <div ref={endRef}></div>
       </div>
 
-      <ChatInput onSend={sendMessage} />
+      <ChatInput onSend={sendMessage} editingMessage={editingMessage} onUpdate={updateMessage} onCancelEdit={() => setEditingMessage(null)} />
     </div>
   );
 }
