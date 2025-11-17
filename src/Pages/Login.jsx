@@ -141,7 +141,7 @@ export default function Login() {
                 {mode === "signup" && (
                   <div className="field">
                     <label>Full name</label>
-                    <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Jane Doe" />
+                    <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Enter Your Name" />
                   </div>
                 )}
 
