@@ -27,6 +27,7 @@ export default function Home() {
               <button className="btn-ghost" onClick={() => navigate('/profile')}>
                 Profile
               </button>
+              <button className="btn-ghost" onClick={() => navigate('/Admin')}  >Admin</button>
               <button className="btn-ghost" onClick={() => signOut(auth)}>
                 Logout
               </button>

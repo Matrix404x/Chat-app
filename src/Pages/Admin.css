@@ -1,0 +1,110 @@
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f3f4f6;
+  font-family: "Inter", sans-serif;
+}
+
+/* Sidebar */
+.admin-sidebar {
+  width: 250px;
+  background: #111827;
+  color: white;
+  padding: 30px;
+}
+
+.admin-sidebar h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.admin-sub {
+  opacity: 0.7;
+  font-size: 14px;
+}
+
+/* Content */
+.admin-content {
+  flex: 1;
+  padding: 30px;
+}
+
+.admin-content h1 {
+  margin-bottom: 5px;
+}
+
+.loading {
+  margin: 10px 0;
+  padding: 10px;
+  color: white;
+  background: #3b82f6;
+  width: max-content;
+  border-radius: 5px;
+}
+
+/* Table */
+.table-wrapper {
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.user-table th,
+.user-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+/* Role badges */
+.role-badge {
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+}
+
+.role-badge.admin {
+  background: #ef4444;
+}
+
+.role-badge.user {
+  background: #6b7280;
+}
+
+/* Buttons */
+.btn {
+  padding: 6px 12px;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.btn-green {
+  background: #10b981;
+  color: white;
+}
+.btn-yellow {
+  background: #f59e0b;
+  color: white;
+}
+.btn-red {
+  background: #ef4444;
+  color: white;
+}
