@@ -10,14 +10,15 @@ import Pnf from "./Pages/Pnf";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./hooks/useAuth";
 import { Toaster } from "react-hot-toast";
+import LoadingScreen from "./Components/LoadingScreen";
 
 
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
 
-  if (loading) return <div>Loading...</div>;
-  return user ? children : <Login />;
+  if (loading) return <LoadingScreen />;
+   return user ? children : <Login />;
 }
 
 
