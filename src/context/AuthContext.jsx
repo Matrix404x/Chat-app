@@ -12,15 +12,13 @@ import {
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);               // firebase auth user
-  const [currentUserData, setCurrentUserData] = useState(null); // firestore profile
+  const [user, setUser] = useState(null);              
+  const [currentUserData, setCurrentUserData] = useState(null); 
   const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState([]);               // all users list
+  const [users, setUsers] = useState([]);               
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // -------------------------
-  // AUTH LISTENER
-  // -------------------------
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
@@ -28,7 +26,6 @@ export const AuthProvider = ({ children }) => {
       if (currentUser) {
         const userRef = doc(db, "users", currentUser.uid);
 
-        // Upsert basic info
         await setDoc(
           userRef,
           {
@@ -41,7 +38,7 @@ export const AuthProvider = ({ children }) => {
           { merge: true }
         );
 
-        // Fetch full user profile including isAdmin
+
         const snap = await getDoc(userRef);
         if (snap.exists()) {
           setCurrentUserData({ uid: currentUser.uid, ...snap.data() });
@@ -56,9 +53,7 @@ export const AuthProvider = ({ children }) => {
     return unsubscribe;
   }, []);
 
-  // -------------------------
-  // LIVE USERS LIST
-  // -------------------------
+  
   useEffect(() => {
     const usersRef = collection(db, "users");
     const unsub = onSnapshot(usersRef, (snapshot) => {
@@ -84,5 +79,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Simple hook
+
 export const useAuth = () => useContext(AuthContext);

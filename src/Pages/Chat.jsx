@@ -11,10 +11,12 @@ import {
   deleteDoc,
   updateDoc,
   doc,
+  setDoc
 } from "firebase/firestore";
 import ChatMessage from "../Components/ChatMessage";
 import ChatInput from "../Components/ChatInput";
 import { useAuth } from "../hooks/useAuth";
+import "./Chat.css";
 
 export default function Chat({ uidProp, inline = false }) {
   const params = useParams();
@@ -25,31 +27,24 @@ export default function Chat({ uidProp, inline = false }) {
   const [selectedUser, setLocalSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [editingMessage, setEditingMessage] = useState(null);
+  const [isTyping, setIsTyping] = useState(false);
 
   const endRef = useRef(null);
 
-  // -------------------------------
-  // 1. Get Selected User
-  // -------------------------------
-  useEffect(() => {
-    const u = users?.find((x) => x.uid === uid) || null;
-    setLocalSelectedUser(u ? u : { uid });
-    setSelectedUser(u ? u : { uid });
-  }, [uid, users, setSelectedUser]);
-
-  // -------------------------------
-  // Helper: generate chatId
-  // -------------------------------
+  // Generate chatId
   const getChatId = () => {
     const currentUid = auth.currentUser?.uid;
-    return currentUid < uid
-      ? `${currentUid}_${uid}`
-      : `${uid}_${currentUid}`;
+    return currentUid < uid ? `${currentUid}_${uid}` : `${uid}_${currentUid}`;
   };
 
-  // -------------------------------
-  // 2. Listen to Messages in Real Time
-  // -------------------------------
+  // Load selected user
+  useEffect(() => {
+    const u = users?.find((x) => x.uid === uid) || { uid };
+    setLocalSelectedUser(u);
+    setSelectedUser(u);
+  }, [uid, users, setSelectedUser]);
+
+  // Listen for all messages in this chat
   useEffect(() => {
     if (!auth.currentUser) return;
 
@@ -66,44 +61,65 @@ export default function Chat({ uidProp, inline = false }) {
     return () => unsub();
   }, [uid]);
 
-  // -------------------------------
-  // 3. Send Message
-  // -------------------------------
+  // Listen for typing indicator
+  useEffect(() => {
+    const chatId = getChatId();
+    const typingRef = doc(db, "typing", chatId);
+
+    const unsub = onSnapshot(typingRef, (snap) => {
+      if (!snap.exists()) return;
+      const data = snap.data();
+
+      // Show typing only for the OTHER user
+      if (data[uid] === true) setIsTyping(true);
+      else setIsTyping(false);
+    });
+
+    return () => unsub();
+  }, [uid]);
+
+  // Send message
   const sendMessage = async (text) => {
     if (!text.trim()) return;
 
     const currentUid = auth.currentUser?.uid;
     const chatId = getChatId();
-
     const msgRef = collection(db, "messages", chatId, "chat");
 
     await addDoc(msgRef, {
       text,
       uid: currentUid,
       to: uid,
-      user:
-        auth.currentUser?.displayName ||
-        auth.currentUser?.email ||
-        "User",
-      toName:
-        selectedUser?.displayName ||
-        selectedUser?.email ||
-        null,
+      user: auth.currentUser?.displayName || auth.currentUser?.email || "User",
+      toName: selectedUser?.displayName || selectedUser?.email || null,
       createdAt: serverTimestamp(),
     });
+
+    // Stop typing after sending a message
+    await setDoc(doc(db, "typing", chatId), {
+      [currentUid]: false,
+    }, { merge: true });
   };
 
-  // -------------------------------
-  // 4. Delete Message
-  // -------------------------------
+  // Handle typing from ChatInput
+  const handleTyping = async (typingState) => {
+    const chatId = getChatId();
+    const currentUid = auth.currentUser.uid;
+
+    await setDoc(
+      doc(db, "typing", chatId),
+      { [currentUid]: typingState },
+      { merge: true }
+    );
+  };
+
+  // Delete message
   const deleteMessage = async (id) => {
     const chatId = getChatId();
     await deleteDoc(doc(db, "messages", chatId, "chat", id));
   };
 
-  // -------------------------------
-  // 5. Edit Message
-  // -------------------------------
+  // Edit message
   const updateMessage = async (id, newText) => {
     if (!newText.trim()) return;
 
@@ -116,9 +132,6 @@ export default function Chat({ uidProp, inline = false }) {
     setEditingMessage(null);
   };
 
-  // -------------------------------
-  // 6. UI
-  // -------------------------------
   return (
     <div className="chat-panel">
       <header className="chat-header">
@@ -135,13 +148,10 @@ export default function Chat({ uidProp, inline = false }) {
 
           <div>
             <div style={{ fontWeight: 700 }}>
-              {selectedUser?.displayName ||
-                selectedUser?.email ||
-                selectedUser?.uid}
+              {selectedUser?.displayName || selectedUser?.email || selectedUser?.uid}
             </div>
-            <div style={{ fontSize: 12, color: "var(--muted)" }}>
-              {selectedUser?.email}
-            </div>
+
+
           </div>
         </div>
 
@@ -169,8 +179,19 @@ export default function Chat({ uidProp, inline = false }) {
         <div ref={endRef} />
       </div>
 
+      {/* TYPING INDICATOR */}
+      {isTyping && (
+        <div className="typing-bubble">
+          <div className="typing-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <small>{selectedUser?.displayName || "User"} is typing...</small>
+        </div>
+      )}
+
       <ChatInput
         onSend={sendMessage}
+        onTyping={handleTyping}
         editingMessage={editingMessage}
         onUpdate={updateMessage}
         onCancelEdit={() => setEditingMessage(null)}

@@ -11,7 +11,6 @@ function Profile() {
   const navigate = useNavigate();
   const [displayName, setDisplayName] = useState(user?.displayName || '');
   const [bio, setBio] = useState('');
-  // store both the selected File and a preview data URL
   const [selectedFile, setSelectedFile] = useState(null);
   const [profileImage, setProfileImage] = useState(user?.photoURL || null);
   const [previewImage, setPreviewImage] = useState(user?.photoURL || null);

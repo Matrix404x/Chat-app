@@ -8,9 +8,7 @@ export default function Admin() {
   const { users, currentUserData } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  // -----------------------
-  // Make or Remove Admin
-  // -----------------------
+  
   const toggleAdmin = async (uid, current) => {
     if (uid === currentUserData.uid) {
       alert("You cannot change your own admin status!");
@@ -28,9 +26,7 @@ export default function Admin() {
     setLoading(false);
   };
 
-  // -----------------------
-  // Delete User
-  // -----------------------
+
   const deleteUser = async (uid) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     if (uid === currentUserData.uid) {
