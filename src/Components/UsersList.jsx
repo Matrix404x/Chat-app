@@ -14,6 +14,7 @@ export default function UsersList() {
     <aside className="sidebar">
       <div className="sidebar-header">
         <h4>People</h4>
+        {/* Potentially add a searchbar here later */}
       </div>
 
       <ul className="users-list">
@@ -24,12 +25,20 @@ export default function UsersList() {
               key={u.uid}
               className={`user-item ${selectedUser?.uid === u.uid ? "selected" : ""}`}
               onClick={() => {
+                setSelectedUser(u);
+                const wide = window.innerWidth >= 800;
+                if (!wide) {
+                  navigate(`/chat/${u.uid}`);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
                   setSelectedUser(u);
-                  const wide = window.innerWidth >= 800;
-                  if (!wide) {
-                    navigate(`/chat/${u.uid}`);
-                  }
-                }}
+                  // Navigate if mobile logic needed
+                }
+              }}
             >
               <div className="avatar" aria-hidden>
                 {u.photoURL ? (
@@ -40,14 +49,16 @@ export default function UsersList() {
               </div>
               <div className="user-info">
                 <div className="name">{u.displayName || u.email}</div>
-                {/* <div className="meta">{u.email}</div> */}
+                {u.email && <div className="meta">{u.email}</div>}
               </div>
+
+              {/* Optional: Add online status indicator if available in future */}
             </li>
           ))}
       </ul>
 
       <div className="sidebar-footer">
-        {/* Personal messaging only - no public chat */}
+        {/* Footer content if needed */}
       </div>
     </aside>
   );

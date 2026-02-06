@@ -55,20 +55,21 @@ export default function ChatInput({
   return (
     <form className="chat-input-form" onSubmit={handleSubmit}>
       <input
-        className="chat-input-field"
+        className="input-field"
         value={text}
-        onChange={(e) => handleTyping(e.target.value)}   // ← UPDATED
+        onChange={(e) => handleTyping(e.target.value)}
         placeholder={editingMessage ? "Edit message..." : "Type a message..."}
         aria-label="Message"
+        style={{ flex: 1 }}
       />
 
       <div style={{ display: "flex", gap: 8 }}>
         {editingMessage ? (
           <>
-            <button className="btn-send" type="submit">Update</button>
+            <button className="btn btn-primary" type="submit">Update</button>
             <button
               type="button"
-              className="btn-secondary"
+              className="btn btn-secondary"
               onClick={() => {
                 setText("");
                 onCancelEdit && onCancelEdit();
@@ -78,7 +79,10 @@ export default function ChatInput({
             </button>
           </>
         ) : (
-          <button className="btn-send" type="submit">Send</button>
+          <button className="btn btn-primary" type="submit">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            Send
+          </button>
         )}
       </div>
     </form>

@@ -86,109 +86,151 @@ export default function Login() {
 
   return (
     <div className="auth-page">
-      <div className="auth-background">
-        <div className="blob blob-1" />
-        <div className="blob blob-2" />
-      </div>
-
       <div className="auth-card">
-        <div className="auth-left">
-          <h1 className="brand">Realtime Chat</h1>
-          <p className="tag">Fast, simple and private messaging.</p>
-          <div className="social">
-            <button className="btn-google" onClick={signInWithGoogle} disabled={loading || mode === "reset"}>
+        <div className="auth-header">
+          <h1>Realtime Chat</h1>
+          <p>
+            {mode === "login" && "Welcome back! Please login to your account."}
+            {mode === "signup" && "Create an account to get started."}
+            {mode === "reset" && "Reset your password."}
+          </p>
+        </div>
+
+        {error && <div className="error-msg">{error}</div>}
+        {success && <div className="status-message success" style={{ marginBottom: '1rem' }}>{success}</div>}
+
+        {mode !== "reset" && (
+          <div style={{ marginBottom: "1.5rem" }}>
+            <button 
+              className="btn btn-secondary" 
+              onClick={signInWithGoogle} 
+              disabled={loading}
+              style={{ width: "100%", justifyContent: "center" }}
+            >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 12.24c0-.68-.06-1.37-.18-2.02H12v3.83h5.35c-.23 1.24-.93 2.27-1.98 2.96v2.47h3.2c1.88-1.73 2.96-4.28 2.96-7.24z" fill="#4285F4"/><path d="M12 23c2.7 0 4.97-.9 6.63-2.43l-3.2-2.47c-.89.6-2.03.96-3.43.96-2.64 0-4.87-1.78-5.66-4.18H2.97v2.62C4.66 20.9 8 23 12 23z" fill="#34A853"/><path d="M6.34 13.88A7.01 7.01 0 016 12c0-.66.1-1.29.34-1.88V7.5H2.97A10.98 10.98 0 002 12c0 1.77.42 3.44 1.17 4.96l3.17-3.08z" fill="#FBBC05"/><path d="M12 5.1c1.47 0 2.8.5 3.84 1.48l2.88-2.88C16.97 1.94 14.7 1 12 1 8 1 4.66 3.1 2.97 6.41l3.37 2.61C7.13 6.88 9.36 5.1 12 5.1z" fill="#EA4335"/></svg>
               Sign in with Google
             </button>
+            <div style={{ margin: "1.5rem 0", display: "flex", alignItems: "center", gap: "1rem" }}>
+              <div style={{ flex: 1, height: "1px", background: "var(--border)" }}></div>
+              <span style={{ color: "var(--text-muted)", fontSize: "0.875rem" }}>or</span>
+              <div style={{ flex: 1, height: "1px", background: "var(--border)" }}></div>
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="auth-right">
-          {mode !== "reset" && (
-            <div className="auth-toggle">
-              <button className={`tab ${mode === "login" ? "active" : ""}`} onClick={() => { setMode("login"); setError(""); setSuccess(""); }}>Login</button>
-              <button className={`tab ${mode === "signup" ? "active" : ""}`} onClick={() => { setMode("signup"); setError(""); setSuccess(""); }}>Sign Up</button>
+        <form onSubmit={(e) => e.preventDefault()}>
+          {mode === "signup" && (
+            <div className="field">
+              <label>Full Name</label>
+              <input 
+                className="input-field" 
+                value={displayName} 
+                onChange={(e) => setDisplayName(e.target.value)} 
+                placeholder="John Doe" 
+              />
             </div>
           )}
 
-          <form className="auth-form" onSubmit={(e) => e.preventDefault()}>
-            {mode === "reset" ? (
-              <>
-                <div style={{ marginBottom: "16px" }}>
-                  <h3 style={{ margin: "0 0 8px", fontSize: "18px" }}>Reset Password</h3>
-                  <p style={{ margin: 0, fontSize: "13px", color: "var(--muted)" }}>Enter your email to receive a password reset link.</p>
-                </div>
+          <div className="field">
+            <label>Email Address</label>
+            <input 
+              className="input-field" 
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              placeholder="you@example.com" 
+            />
+          </div>
 
-                <div className="field">
-                  <label>Email</label>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
-                </div>
+          {mode !== "reset" && (
+            <div className="field">
+              <label>Password</label>
+              <input 
+                className="input-field" 
+                type="password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                placeholder="••••••••" 
+              />
+            </div>
+          )}
 
-                {error && <div className="error">{error}</div>}
-                {success && <div className="success-msg">{success}</div>}
-
-                <div style={{ display: "flex", gap: "8px", marginTop: "16px" }}>
-                  <button className="btn-primary" onClick={handleResetPassword} disabled={loading} style={{ flex: 1 }}>
-                    {loading ? "Sending..." : "Send Reset Link"}
-                  </button>
-                  <button className="btn-secondary" onClick={() => { setMode("login"); setError(""); setSuccess(""); }} type="button">
-                    Back
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                {mode === "signup" && (
-                  <div className="field">
-                    <label>Full name</label>
-                    <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Enter Your Name" />
-                  </div>
-                )}
-
-                <div className="field">
-                  <label>Email</label>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
-                </div>
-
-                <div className="field">
-                  <label>Password</label>
-                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter a secure password" />
-                </div>
-
-                {error && <div className="error">{error}</div>}
-                {success && <div className="success-msg">{success}</div>}
-
-                <div className="actions">
-                  {mode === "login" ? (
-                    <button className="btn-primary" onClick={signInWithEmail} disabled={loading}>
-                      {loading ? "Logging in..." : "Login"}
-                    </button>
-                  ) : (
-                    <button className="btn-primary" onClick={signUp} disabled={loading}>
-                      {loading ? "Creating account..." : "Create account"}
-                    </button>
-                  )}
-                </div>
-
-                {mode === "login" && (
-                  <div style={{ textAlign: "center", marginTop: "12px" }}>
-                    <button
-                      type="button"
-                      className="btn-link"
-                      onClick={() => { setMode("reset"); setError(""); setSuccess(""); }}
-                      style={{ fontSize: "13px" }}
-                    >
-                      Forgot password?
-                    </button>
-                  </div>
-                )}
-
-                <div className="help">
-                  <small>By continuing you agree to the terms and privacy.</small>
-                </div>
-              </>
+          <div style={{ marginTop: "1.5rem" }}>
+            {mode === "login" && (
+              <button 
+                className="btn btn-primary" 
+                style={{ width: "100%" }} 
+                onClick={signInWithEmail} 
+                disabled={loading}
+              >
+                {loading ? "Logging in..." : "Login"}
+              </button>
             )}
-          </form>
+            {mode === "signup" && (
+              <button 
+                className="btn btn-primary" 
+                style={{ width: "100%" }} 
+                onClick={signUp} 
+                disabled={loading}
+              >
+                {loading ? "Creating Account..." : "Create Account"}
+              </button>
+            )}
+            {mode === "reset" && (
+               <div style={{ display: "flex", gap: "1rem" }}>
+                 <button 
+                  className="btn btn-secondary" 
+                  style={{ flex: 1 }} 
+                  onClick={() => { setMode("login"); setError(""); setSuccess(""); }}
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="btn btn-primary" 
+                  style={{ flex: 1 }} 
+                  onClick={handleResetPassword} 
+                  disabled={loading}
+                >
+                  {loading ? "Sending..." : "Send Reset Link"}
+                </button>
+              </div>
+            )}
+          </div>
+        </form>
+
+        <div style={{ marginTop: "1.5rem", textAlign: "center", fontSize: "0.875rem" }}>
+          {mode === "login" && (
+            <>
+              <p style={{ marginBottom: "0.5rem" }}>
+                <button className="btn-ghost" style={{ padding: 0 }} onClick={() => { setMode("reset"); setError(""); }}>
+                  Forgot password?
+                </button>
+              </p>
+              <p style={{ color: "var(--text-muted)" }}>
+                Don't have an account?{" "}
+                <button 
+                  className="btn-ghost" 
+                  style={{ padding: 0, color: "var(--primary)", fontWeight: 600 }} 
+                  onClick={() => { setMode("signup"); setError(""); }}
+                >
+                  Sign up
+                </button>
+              </p>
+            </>
+          )}
+          {mode === "signup" && (
+            <p style={{ color: "var(--text-muted)" }}>
+              Already have an account?{" "}
+              <button 
+                className="btn-ghost" 
+                style={{ padding: 0, color: "var(--primary)", fontWeight: 600 }} 
+                onClick={() => { setMode("login"); setError(""); }}
+              >
+                Login
+              </button>
+            </p>
+          )}
         </div>
       </div>
     </div>

@@ -137,30 +137,38 @@ export default function Chat({ uidProp, inline = false }) {
       <header className="chat-header">
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           {inline ? (
-            <button className="btn-ghost" onClick={() => setSelectedUser(null)}>
-              &times;
+            <button className="btn btn-ghost" onClick={() => setSelectedUser(null)} style={{ padding: "4px 8px" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
             </button>
           ) : (
-            <button className="btn-ghost" onClick={() => navigate(-1)}>
-              &larr;
+            <button className="btn btn-ghost" onClick={() => navigate(-1)} style={{ padding: "4px 8px" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
             </button>
           )}
 
-          <div>
-            <div style={{ fontWeight: 700 }}>
-              {selectedUser?.displayName || selectedUser?.email || selectedUser?.uid}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            {selectedUser?.photoURL ? (
+              <img src={selectedUser.photoURL} alt="" style={{ width: 32, height: 32, borderRadius: 999 }} />
+            ) : (
+              <div style={{ width: 32, height: 32, borderRadius: 999, background: "#e0e7ff", display: "flex", alignItems: "center", justifyContent: "center", color: "#6366f1", fontWeight: 600 }}>
+                {(selectedUser?.displayName || selectedUser?.email || "?").charAt(0).toUpperCase()}
+              </div>
+            )}
+            <div>
+              <div style={{ fontWeight: 600, fontSize: "15px", lineHeight: "1.2" }}>
+                {selectedUser?.displayName || selectedUser?.email || selectedUser?.uid}
+              </div>
+              {/* <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>Online</div> */}
             </div>
-
-
           </div>
         </div>
 
         <div className="header-actions">
-          <button className="btn-ghost" onClick={() => navigate("/profile")}>
+          <button className="btn btn-ghost" onClick={() => navigate("/profile")}>
             Profile
           </button>
           {!inline && (
-            <button className="btn-ghost" onClick={() => navigate("/home")}>
+            <button className="btn btn-ghost" onClick={() => navigate("/home")}>
               Home
             </button>
           )}
@@ -181,11 +189,8 @@ export default function Chat({ uidProp, inline = false }) {
 
       {/* TYPING INDICATOR */}
       {isTyping && (
-        <div className="typing-bubble">
-          <div className="typing-dots">
-            <span></span><span></span><span></span>
-          </div>
-          <small>{selectedUser?.displayName || "User"} is typing...</small>
+        <div style={{ padding: "0 24px 8px", fontSize: "0.8rem", color: "var(--text-muted)", fontStyle: "italic" }}>
+          {selectedUser?.displayName || "User"} is typing...
         </div>
       )}
 

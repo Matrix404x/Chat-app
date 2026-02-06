@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 import UsersList from "../Components/UsersList";
 import Chat from "./Chat";
 import { useAuth } from "../hooks/useAuth";
-import toast from "react-hot-toast";
-
 
 export default function Home() {
   const navigate = useNavigate();
@@ -22,22 +20,25 @@ export default function Home() {
       ) : (
         <div className="chat-panel">
           <header className="chat-header">
-            <h2>Realtime Chat</h2>
+            <h2>Messages</h2>
             <div className="header-actions">
-              <button className="btn-ghost" onClick={() => navigate('/profile')}>
+              <button className="btn btn-ghost" onClick={() => navigate('/profile')}>
                 Profile
               </button>
-              <button className="btn-ghost" onClick={() => navigate('/Admin')}  >Admin</button>
-              <button className="btn-ghost" onClick={() => signOut(auth)}>
+              <button className="btn btn-ghost" onClick={() => navigate('/Admin')}>
+                Admin
+              </button>
+              <button className="btn btn-ghost" onClick={() => signOut(auth)}>
                 Logout
               </button>
             </div>
           </header>
 
-          <div className="messages">
-            <div style={{ padding: "20px", textAlign: "center", color: "var(--muted)" }}>
-              <p style={{ fontSize: "18px", fontWeight: "600" }}>Select a person to start messaging</p>
-              <p style={{ fontSize: "14px" }}>Click on any user in the left sidebar to open a direct chat.</p>
+          <div className="messages" style={{ alignItems: "center", justifyContent: "center", textAlign: "center", opacity: 0.6 }}>
+            <div style={{ maxWidth: "300px" }}>
+              <div style={{ fontSize: "48px", marginBottom: "16px" }}>👋</div>
+              <h3 style={{ marginTop: 0, fontWeight: 600, color: "var(--text-main)" }}>Welcome back!</h3>
+              <p style={{ color: "var(--text-muted)" }}>Select a person from the sidebar to start chatting.</p>
             </div>
           </div>
         </div>
